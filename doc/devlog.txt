@@ -1,0 +1,24 @@
+29/07/23
+    9:27pm
+    -   Empezare con el proyecto de señales de Javier
+    -   El primer programa sera un cortador de señales
+    -   El cortador murio, resulta que no todas las imagenes tienen 6 señales,
+        las cortare a mano
+    
+    10:19pm
+    -   He terminado de recortar las imagenes y nombrarlas
+
+30/07/23
+    12:14am
+    -   La interfaz va muy bien, faltan algunos detalles pero todo correcto en
+        las mecanicas principales
+    -   Me pondre a hacer el diccionario de traducciones
+    12:51am
+    -   Termine el diccionario
+
+    1:07am
+    -   He terminado
+    
+    1:22am
+    - Subire a GitHub mientras hablo con Demian, usare el UploadHub
+    - Necesito un modo de UploadHub para Git
