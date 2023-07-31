@@ -14,24 +14,32 @@ class App(ttk.Window):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
+        # STYLE
+        self.font = ('Segoe UI', 16)
+
         # SOUNDS
         self.error_sound = pygame.mixer.Sound('sounds/error.mp3') 
         self.correct_sound = pygame.mixer.Sound('sounds/correct.mp3') 
+
+        # GAME PROPERTIES
+        self.answers = 0
+        self.wins = -1
+        self.errors = False
+        self.numbers = [0, 1, 2, 3]
 
         # PROPERTIES
         self.image_size = 200
         self.icon_size = 100
         self.image_dir = os.path.join(os.path.dirname(__file__), 'images')
         self.images_paths = os.listdir(self.image_dir)
-        self.answers = 0
-        self.wins = -1
-        self.errors = False
-        self.font = ('Segoe UI', 16)
+
+        # BUILD
         self.reset_images()
         self.render_game()
 
 
     def load_image(self, image_name: str) -> tuple[Image, str]:
+        """Loads an image with its traduction"""
 
         # LOADING IMAGE
         result = pil_image.new(mode='RGB', size=(self.image_size-2, self.image_size-2), color=(255, 255, 255))
@@ -48,11 +56,12 @@ class App(ttk.Window):
         image = Image(self)
         image.set_image(result)
 
+        # GETTING TRADUCTION
         name = image_name.replace('.png', '').lower()
-
         return image, TRADUCTIONS[name]
     
     def load_icon(self, image_name: str) -> Image:
+        """ Loads an icon and returns a draggable icon"""
 
         # LOADING IMAGE
         result = pil_image.new(mode='RGB', size=(self.icon_size, self.icon_size), color=(255, 255, 255))
@@ -69,31 +78,51 @@ class App(ttk.Window):
         image = Image(self)
         image.set_image(result)
 
+        # RETURN A DRAGGABLE
         return Draggable(image)
 
     def reset_images(self) -> None:
+        """Shuffles the images and loads the images and icons"""
         random.shuffle(self.images_paths)
         self.images = [self.load_image(image_name) for image_name in self.images_paths]
         self.icons = [self.load_icon(image_name) for image_name in self.images_paths]
 
     def collide_rect(self, x: int, y: int, i: int, j: int) -> bool:
+        """Checks if the x, y collides entirely on the image"""
         image_x, image_y = 100 + i*self.image_size, 100 + j*self.image_size
-        if (x >= image_x) and (x+self.icon_size <= image_x+self.image_size):
-            if (y >= image_y) and (y+self.icon_size <= image_y+self.image_size):
-                return True
-        return False
+        conditions = [
+            (x >= image_x), (x+self.icon_size <= image_x+self.image_size)
+            (y >= image_y), (y+self.icon_size <= image_y+self.image_size)
+        ]
+        return all(conditions)
+
+    def reset(self) -> None:
+        """Resets the UI for the game"""
+
+        # DELETE PREVIOUS ELEMENTS
+        for children in self.winfo_children():
+            children.place_forget()
+
+        # PLACE THE UI
+        ttk.Label(self, text=f'Puntos: {self.wins}', font=self.font).place(x=25, y=25)
+        if len(self.images) < 4: self.reset_images()
+        random.shuffle(self.numbers)
 
     def render_game(self, *_) -> None:
+        """Renders a new game"""
+
+        # RESET CONFIGURATION EACH GAME
         self.answers = 0
         if not self.errors: self.wins += 1
         self.errors = False
-        def attach(icon_, image_, image_index, icon_index) -> None:
-            icon_x, icon_y = icon_.winfo_x(), icon_.winfo_y()
-            collisions = [
-                self.collide_rect(icon_x, icon_y, i%2, i//2)
-                for i in range(4)
-            ]
 
+        # CUSTOM ATTACH FUNCTION
+        def attach(icon_, image_, image_index, icon_index) -> None:
+            """Checks collision for the icon and its attached image"""
+            icon_x, icon_y = icon_.winfo_x(), icon_.winfo_y()
+
+            # GET COLISIONS
+            collisions = [self.collide_rect(icon_x, icon_y, i%2, i//2) for i in range(4)]
             if any(collisions):
                 if not collisions[image_index]:
                     self.errors = True
@@ -105,39 +134,33 @@ class App(ttk.Window):
                     icon_.place_forget()
                     return image_.lift()
             
+            # PLACE ICON TO ITS ORIGINAL POSITION
             icon_x, icon_y = 100 + icon_index*self.icon_size, 550
             icon_.place(x=icon_x, y=icon_y)
             
+        # DELETE PREVIOUS GAME
+        self.reset()
+        for i, icon_index in enumerate(self.numbers):
 
-        for children in self.winfo_children():
-            children.place_forget()
-
-        ttk.Label(self, text=f'Puntos: {self.wins}', font=self.font).place(x=25, y=25)
-
-        if len(self.images) < 4: self.reset_images()
-        numbers = [0, 1, 2, 3]
-        for i in range(4):
+            # GET COORDINATES
             x, y = i%2, i//2
             image_x, image_y = 100 + x*self.image_size, 100 + y*self.image_size
-    
-            icon_index = random.choice(numbers)
             icon_x, icon_y = 100 + icon_index*self.icon_size, 550
-            numbers.remove(icon_index)
-            index = random.randint(0, len(self.images)-1)
-            image, name = self.images[index] 
-            icon = self.icons[index]
-            self.images.pop(index)
-            self.icons.pop(index)
-            
+
+            # GET IMAGE AND ICON
+            image, name = self.images.pop(0) 
+            icon = self.icons.pop(0)
             image.place(x=image_x, y=image_y)
+
+            # ADD NEW FRAME TO RECEIVE AN IMAGE
             frame = tk.Frame(self, bg='red', highlightthickness=1, highlightbackground='green')
             tk.Label(frame, text=name, justify='center', wraplength=180).place(relx=0.5, rely=0.5, anchor='center')
             frame.pack_propagate(False)
             frame.place(x=image_x, y=image_y, width=self.image_size, height=self.image_size)
             frame.lift()
 
+            # ADD THE ICON
             icon.place(x=icon_x, y=icon_y)
-
             command = lambda _, icon_=icon, image_=image, image_index=i, icon_index=icon_index: attach(icon_, image_, image_index, icon_index)
             icon.bind('<ButtonRelease-1>', command)
 
