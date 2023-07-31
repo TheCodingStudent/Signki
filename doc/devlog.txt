@@ -22,3 +22,17 @@
     1:22am
     - Subire a GitHub mientras hablo con Demian, usare el UploadHub
     - Necesito un modo de UploadHub para Git
+
+31/07/23p
+    3:47pm
+    -   Agregue sonidos
+    -   Simplifique el codigo
+    -   Lo documente
+    -   Mejore el sistema de puntaje
+    -   Falta lo de el tutorial y ya
+
+    4:56pm
+    -   Hice los iconos mas grandes
+    -   Termine el tutorial, al final lo hice como tipo galeria en lugar de que
+        se scrollee debido a que se laguea mucho
+    -   Los iconos se colocan basados en su tamaño
