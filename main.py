@@ -19,10 +19,6 @@ class App(ttk.Window):
         # STYLE
         self.font = ('Segoe UI', 16)
 
-        # SOUNDS
-        self.error_sound = pygame.mixer.Sound('sounds/error.mp3') 
-        self.correct_sound = pygame.mixer.Sound('sounds/correct.mp3') 
-
         # GAME PROPERTIES
         self.answers = 0
         self.wins = -1
@@ -33,7 +29,12 @@ class App(ttk.Window):
         self.icon_size = 140
         self.image_size = 200
         self.image_dir = os.path.join(os.path.dirname(__file__), 'images')
+        self.sound_dir = os.path.join(os.path.dirname(__file__), 'sounds')
         self.images_paths = os.listdir(self.image_dir)
+
+        # SOUNDS
+        self.error_sound = pygame.mixer.Sound(f'{self.sound_dir}/error.mp3') 
+        self.correct_sound = pygame.mixer.Sound(f'{self.sound_dir}/correct.mp3') 
 
         # BUILD
         self.tutorial = Tutorial(self, width=600, height=700)
