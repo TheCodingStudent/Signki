@@ -36,3 +36,9 @@
     -   Termine el tutorial, al final lo hice como tipo galeria en lugar de que
         se scrollee debido a que se laguea mucho
     -   Los iconos se colocan basados en su tamaño
+
+    5:21pm
+    -   Hice un compilador, eso me llevo a pensar en que cuando agregue el
+        modo Git al UploadHub deberia tener una opcion para generar un compilador,
+        tomaria en cuenta los directorios que esten en la carpeta del proyecto,
+        pero deberia tener un archivo main.py o algo asi.
