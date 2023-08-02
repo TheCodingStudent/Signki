@@ -1,6 +1,10 @@
 import os
 import shutil
 import subprocess
+import pkg_resources
+
+installed = {pkg.key for pkg in pkg_resources.working_set}
+if not 'pyinstaller' in installed: subprocess.run('pip install pyinstaller')
 
 path = os.path.dirname(__file__)
 command = f'''pyinstaller --noconfirm --onefile --windowed \
